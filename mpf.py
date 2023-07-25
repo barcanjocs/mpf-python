@@ -8,27 +8,13 @@ only the difference/score matrices.
 import numpy as np
 import pandas as pd
 from mpf_run import mpf_run
-from dataclasses import dataclass
-
-@dataclass
-class AlgoSettings :
-    max_seq_len = 20
-    min_seq_len = 5
-    obs_th = 0.5
-    epsilon = 0.001
-    min_vel = 0
-    max_vel = 5
-    qual_th = 0.1
-    plot_th = 0.4
-    R_window = 20
-    normalise = True
-    qROC_smooth = False
+from settings import AlgoSettings
 
 algo_settings = AlgoSettings()
 
-matrices_path = ''
-techniques = []
-dataset = 'winter'
+matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
+techniques = ['HOG', 'HybridNet']
+dataset = 'dayright'
 diff_matrices = []
 
 # Load difference matrices

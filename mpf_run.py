@@ -1,10 +1,10 @@
 import numpy as np
-import numpy.typing as npt
 from viterbi_smart_dynamic_features import vit_sdf
 from patch_normalize_hmm import patch_normalize_hmm
-from mpf import AlgoSettings
+from settings import AlgoSettings
 
 def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
+    
     num_techniques = len(diff_matrices)
     num_queries = diff_matrices[0].size[0]
     num_places = diff_matrices[0].size[1]
@@ -20,6 +20,7 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
     
     for query in range(num_queries) :
         for tech in range(num_techniques):
+            
             # Normalise according to MPF paper/code
             diff_vector = np.array(diff_matrices[tech][query])
             mx = diff_vector.max()
