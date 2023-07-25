@@ -2,12 +2,13 @@ import numpy as np
 from viterbi_smart_dynamic_features import vit_sdf
 from patch_normalize_hmm import patch_normalize_hmm
 from settings import AlgoSettings
+from find_worst_id import find_worst_id
 
 def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
-    
     num_techniques = len(diff_matrices)
-    num_queries = diff_matrices[0].size[0]
-    num_places = diff_matrices[0].size[1]
+    num_queries = diff_matrices[0].shape[0]
+    num_places = diff_matrices[0].shape[1]
+    worst_id_array = np.zeros(num_queries)
     
     # Initialize transition matrix
     transition_matrix = np.zeros((num_queries, num_places))
@@ -34,10 +35,13 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
                 else :
                     diff_matrices[tech][query][k] = O_diff
 
-
+        
+        worst_id_array[query] = find_worst_id(diff_matrices, query, algo_settings.R_window)
+        
         if query > algo_settings.max_seq_len :
             S = np.arange(query - algo_settings.max_seq_len, query)
             
-            seq, quality, newSeqLen = vit_sdf(S, transition_matrix, diff_matrices, algo_settings)
+            vit_sdf(S, transition_matrix, diff_matrices, algo_settings)
 
-            
+        
+    
