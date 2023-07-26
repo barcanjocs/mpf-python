@@ -9,7 +9,8 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
     num_queries = diff_matrices[0].shape[0]
     num_places = diff_matrices[0].shape[1]
     worst_id_array = np.zeros(num_queries)
-    
+    diff_matrices = np.array(diff_matrices)
+ 
     # Initialize transition matrix
     transition_matrix = np.zeros((num_queries, num_places))
     for j in range(num_queries) :
@@ -35,7 +36,6 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
                 else :
                     diff_matrices[tech][query][k] = O_diff
 
-        
         worst_id_array[query] = find_worst_id(diff_matrices, query, algo_settings.R_window)
         
         if query > algo_settings.max_seq_len :
@@ -46,7 +46,7 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
             quality = quality/newSeqLength
             
             id = seq[newSeqLength-1]
-        
+
             print(id)
         
     
