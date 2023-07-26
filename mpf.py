@@ -13,7 +13,7 @@ from settings import AlgoSettings
 algo_settings = AlgoSettings()
 
 matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
-techniques = ['HOG', 'HybridNet']
+techniques = ['HybridNet', 'CoHOG', 'HOG', 'CALC']
 dataset = 'dayright'
 diff_matrices = []
 

@@ -41,7 +41,7 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
         if query > algo_settings.max_seq_len :
             S = np.arange(query - algo_settings.max_seq_len, query)
             
-            vit_sdf(S, transition_matrix, diff_matrices, algo_settings)
+            vit_sdf(S, transition_matrix, diff_matrices, algo_settings, worst_id_array)
 
         
     
