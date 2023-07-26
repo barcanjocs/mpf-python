@@ -56,9 +56,47 @@ def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
     
     delta = np.zeros((num_places, tau))
     H = np.zeros((num_places, tau))
-    SS = np.zeros((1, tau))
+    SS = np.zeros(tau)
     delta = np.int16(delta)
     H[:, 1] = 0
+
+    if worst_ID_array[0] == -1 :
+        delta[:, 1] = log_obs[:, :, seq_start+1].sum()
+    else:
+        delta[:, 1] = np.delete(log_obs,int(worst_ID_array[0]), 0)[:, :, 1].sum()
+    
+    for q in range(1, tau) :
+        delta[:, q] = (np.tile(delta[:, q - 1], (num_places, 1)) + T).max(axis=1)
+        H[:, q] = (np.tile(delta[:, q - 1], (num_places, 1)) + T).argmax(axis=1)
+        
+        if worst_ID_array[q] == -1 :
+            delta[:, q] = delta[:, q] + log_obs[:, :, q+seq_start]
+        
+        else :
+            delta[:, q] = delta[:, q] + np.delete(log_obs,int(worst_ID_array[q]), 0)[:, :, q+seq_start].sum()
+        
+    SS[tau-1] = delta[:, tau-1].argmax()
+    
+    quality_total = 0
+   
+    for q in range(tau-2, 0, -1) :
+        SS[q] = H[int(SS[q+1]), q+1]
+
+        min_idx = SS[q+1]
+        min_value = float(delta[int(SS[q+1]), q+1])
+        window = np.arange(max(1, min_idx - algo_settings.R_window), 
+                           min_idx+algo_settings.R_window)
+        not_window = np.setxor1d(np.arange(1, num_places), window).astype(int)
+        
+        min_value_2nd = float(delta[not_window, q+1].max())
+        
+        quality = min_value / min_value_2nd
+        quality_total += quality
+    
+    seq_len = tau
+    
+    return SS, quality_total, seq_len
+    
     
     
     
