@@ -14,7 +14,7 @@ algo_settings = AlgoSettings()
 
 matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
 techniques = ['HybridNet', 'CoHOG', 'HOG', 'CALC']
-dataset = 'dayright'
+dataset = 'winter'
 diff_matrices = []
 
 # Load difference matrices

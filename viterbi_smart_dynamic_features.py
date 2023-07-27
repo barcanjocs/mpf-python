@@ -4,8 +4,6 @@ from settings import AlgoSettings
 
 def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
     tau = len(S) # Sequence length
-    num_techs = len(diff_matrices)
-    num_queries = diff_matrices[0].shape[0]
     num_places = diff_matrices[0].shape[1]
     quality = np.zeros(tau)
     qROC = np.zeros(tau)
@@ -23,9 +21,11 @@ def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
     
     for q in range(tau) :
         worst_id = worst_ID_array[S[q]]
-        for tech in range(len(diff_matrices)) :
-            if tech != worst_id :
-                full_obs[:, q] += log_obs[tech][:, q]
+        
+        if worst_id == -1 :
+            full_obs[:, q] = log_obs[:, :, q].sum(axis=0)
+        else :
+            full_obs[:, q] = np.delete(log_obs, int(worst_id), 0)[:, :, q].sum(axis=0)
         
     min_values = full_obs.max(axis = 0)
     min_indices = full_obs.argmax(axis = 0)
@@ -37,7 +37,6 @@ def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
         min_value_2nd = full_obs[not_window, q].max()
         quality[q] = min_values[q] / min_value_2nd
         
-        
     if algo_settings.qROC_smooth :
         pass
     else : 
@@ -47,19 +46,18 @@ def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
     q_compare = qROC.min()
     seq_start = qROC.argmin()
     
-    
     if abs(q_compare) < algo_settings.qual_th :
         seq_start = 0
-        
+    
     tau -= seq_start
     
-    T = np.int16(T*1000)
-    log_obs = np.int16(log_obs*1000)
+    T = np.int64(T*1000)
+    log_obs = np.int64(log_obs*1000)
     
     delta = np.zeros((num_places, tau))
     H = np.zeros((num_places, tau))
     SS = np.zeros(tau)
-    delta = np.int16(delta)
+    delta = np.int64(delta)
     H[:, 0] = 0
     
     if worst_ID_array[S[0]] == -1 :
@@ -69,21 +67,27 @@ def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
         delta[:, 0] = np.delete(log_obs, int(worst_ID_array[S[0]]), 0)[:, :, seq_start+1].sum(axis=0)
     
     for q in range(1, tau) :
-        tmp = (delta[:, q - 1] + T)
+        tmp = np.tile(delta[:, q - 1], (num_places, 1)).T
+        tmp = tmp + T
         delta[:, q] = tmp.max(axis=0)
+        
         H[:, q] = tmp.argmax(axis=0)
         
-        if worst_ID_array[S[q]] == -1 :
+        if worst_ID_array[S[q]] == - 1 :
             delta[:, q] = delta[:, q] + log_obs[:, :, q+seq_start].sum(axis=0)
             
         else :
-            delta[:, q] = delta[:, q] + np.delete(log_obs, int(worst_ID_array[S[q]]), 0)[:, :, q+seq_start].sum(axis=0)
+            summation = np.delete(log_obs, int(worst_ID_array[S[q]]), 0)[:, :, q+seq_start].sum(axis=0)
+            delta[:, q] += summation
+    
     SS[tau-1] = delta[:, tau-1].argmax()
     
     quality_total = 0
     
     for q in range(tau-2, -1, -1) :
+        
         SS[q] = H[int(SS[q+1]), q+1]
+        
         min_idx = SS[q+1]
         min_value = float(delta[int(SS[q+1]), q+1])
         

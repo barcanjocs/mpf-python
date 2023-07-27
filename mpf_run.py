@@ -10,7 +10,9 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
     num_places = diff_matrices[0].shape[1]
     worst_id_array = np.zeros(num_queries)
     diff_matrices = np.array(diff_matrices)
- 
+    
+    normalized_matricies = np.zeros((len(diff_matrices), num_queries, num_places))
+    
     # Initialize transition matrix
     transition_matrix = np.zeros((num_queries, num_places))
     for j in range(num_queries) :
@@ -26,22 +28,23 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
             # Normalise according to MPF paper/code
             diff_vector = np.array(diff_matrices[tech][query])
             mx = diff_vector.max()
+            mn = diff_vector.min()
             df = mx - diff_vector.min()
             
             for k in range(num_places):
-                O_diff = ((mx - diff_vector[k])/df) - algo_settings.epsilon
+                O_diff = ((diff_vector[k] - mn)/df) - algo_settings.epsilon
             
                 if O_diff < algo_settings.obs_th :
-                    diff_matrices[tech][query][k] = algo_settings.epsilon
+                    normalized_matricies[tech][query][k] = algo_settings.epsilon
                 else :
-                    diff_matrices[tech][query][k] = O_diff
+                    normalized_matricies[tech][query][k] = O_diff
 
-        worst_id_array[query] = find_worst_id(diff_matrices, query, algo_settings.R_window)
+        worst_id_array[query] = find_worst_id(normalized_matricies, query, algo_settings.R_window)
         
         if query > algo_settings.max_seq_len :
             S = np.arange(query - algo_settings.max_seq_len, query)
             
-            seq, quality, newSeqLength = vit_sdf(S, transition_matrix, diff_matrices, algo_settings, worst_id_array)
+            seq, quality, newSeqLength = vit_sdf(S, transition_matrix, normalized_matricies, algo_settings, worst_id_array)
 
             quality = quality/newSeqLength
             
