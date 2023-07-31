@@ -17,9 +17,9 @@ algo_settings = AlgoSettings()
 
 matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
 techniques = ['NetVLAD', 'CoHOG', 'HOG', 'CALC']
-dataset = '17places_night'
-numTemplates = 2000
-margin=10
+dataset = 'stlucia'
+numTemplates = 1100
+margin=1
 diff_matrices = []
 
 # Load difference matrices
@@ -49,13 +49,14 @@ p, r, auc = helpers.custom_label_pr_auc(preds, selected_scores, labels, margin)
 print(auc, e, 4 * numTemplates)
 
 data = {
+    "technique" : "MPF",
     "dataset" : dataset,
     "queries" : numTemplates,
     "time" : e,
     "tech_runs" : 4 * numTemplates
 }
 
-pd.DataFrame([data]).to_csv("./data/mpf_times.csv", mode="a")
+pd.DataFrame([data]).to_csv("./data/comp_times.csv", mode="a", header=False)
 # helpers.pr_auc_to_file(p, r, [auc], "./data/MPF_" + dataset + ".csv")
 
 
