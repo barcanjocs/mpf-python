@@ -48,7 +48,15 @@ p, r, auc = helpers.custom_label_pr_auc(preds, selected_scores, labels, margin)
 
 print(auc, e, 4 * numTemplates)
 
-helpers.pr_auc_to_file(p, r, [auc], "./data/MPF_" + dataset + ".csv")
+data = {
+    "dataset" : dataset,
+    "queries" : numTemplates,
+    "time" : e,
+    "tech_runs" : 4 * numTemplates
+}
+
+pd.DataFrame([data]).to_csv("./data/mpf_times.csv", mode="a")
+# helpers.pr_auc_to_file(p, r, [auc], "./data/MPF_" + dataset + ".csv")
 
 
 
