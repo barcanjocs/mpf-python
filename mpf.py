@@ -16,8 +16,9 @@ algo_settings = AlgoSettings()
 
 matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
 techniques = ['NetVLAD', 'CoHOG', 'HOG', 'CALC']
-dataset = '17places_night'
-numTemplates = 2000
+dataset = 'fall'
+numTemplates = 1000
+margin=1
 diff_matrices = []
 
 # Load difference matrices
@@ -40,7 +41,7 @@ selected_scores = np.array(scores).max(axis=1)
 
 labels = np.arange(numTemplates - len(selected_scores), numTemplates)
 
-p, r, auc = helpers.custom_label_pr_auc(preds, selected_scores, labels, 5)
+p, r, auc = helpers.custom_label_pr_auc(preds, selected_scores, labels, margin)
 
 helpers.pr_auc_to_file(p, r, [auc], "./data/MPF_" + dataset + ".csv")
 
