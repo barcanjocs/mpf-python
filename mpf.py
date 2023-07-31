@@ -48,7 +48,7 @@ p, r, auc = helpers.custom_label_pr_auc(preds, selected_scores, labels, margin)
 
 print(auc, e, 4 * numTemplates)
 
-# helpers.pr_auc_to_file(p, r, [auc], "./data/MPF_" + dataset + ".csv")
+helpers.pr_auc_to_file(p, r, [auc], "./data/MPF_" + dataset + ".csv")
 
 
 
