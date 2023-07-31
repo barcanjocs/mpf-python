@@ -17,7 +17,7 @@ algo_settings = AlgoSettings()
 matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
 techniques = ['NetVLAD', 'CoHOG', 'HOG', 'CALC']
 dataset = '17places_night'
-numTemplates = 1100
+numTemplates = 2000
 diff_matrices = []
 
 # Load difference matrices
