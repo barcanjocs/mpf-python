@@ -11,6 +11,10 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
     worst_id_array = np.zeros(num_queries)
     diff_matrices = np.array(diff_matrices)
     
+    preds = []
+    pred_scores = []
+    quals = []
+    
     normalized_matricies = np.zeros((len(diff_matrices), num_queries, num_places))
     
     # Initialize transition matrix
@@ -44,12 +48,16 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
         if query > algo_settings.max_seq_len :
             S = np.arange(query - algo_settings.max_seq_len, query)
             
-            seq, quality, newSeqLength = vit_sdf(S, transition_matrix, normalized_matricies, algo_settings, worst_id_array)
+            seq, quality, newSeqLength, scores = vit_sdf(S, transition_matrix, normalized_matricies, algo_settings, worst_id_array)
 
             quality = quality/newSeqLength
             
             id = seq[newSeqLength-1]
 
-            print(id)
+            preds.append(id)
+            quals.append(quality)
+            pred_scores.append(scores)
+            
+    return preds, quals, np.array(pred_scores)
         
     

@@ -81,6 +81,7 @@ def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
             delta[:, q] += summation
     
     SS[tau-1] = delta[:, tau-1].argmax()
+    pred_scores = delta[:, tau-1]
     
     quality_total = 0
     
@@ -103,7 +104,7 @@ def vit_sdf(S, T, diff_matrices, algo_settings: AlgoSettings, worst_ID_array) :
     
     seq_len = tau
     
-    return SS, quality_total, seq_len
+    return SS, quality_total, seq_len, pred_scores
     
     
     
