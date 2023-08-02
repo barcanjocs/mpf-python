@@ -17,8 +17,8 @@ algo_settings = AlgoSettings()
 
 matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
 techniques = ['NetVLAD', 'CoHOG', 'HOG', 'CALC']
-dataset = 'stlucia'
-numTemplates = 1100
+dataset = '17places_night'
+numTemplates = 2000
 margin=1
 diff_matrices = []
 
@@ -56,8 +56,8 @@ data = {
     "tech_runs" : 4 * numTemplates
 }
 
-pd.DataFrame([data]).to_csv("./data/comp_times.csv", mode="a", header=False)
-# helpers.pr_auc_to_file(p, r, [auc], "./data/MPF_" + dataset + ".csv")
+# pd.DataFrame([data]).to_csv("./data/comp_times.csv", mode="a", header=False)
+helpers.pr_auc_to_file(p, r, [auc], "./MPF_" + dataset + ".csv")
 
 
 
