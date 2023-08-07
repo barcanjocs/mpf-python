@@ -29,14 +29,15 @@ def mpf_run(diff_matrices: list, algo_settings: AlgoSettings) :
     for query in range(num_queries) :
         for tech in range(num_techniques):
             
-            # Normalise according to MPF paper/code
             diff_vector = np.array(diff_matrices[tech][query])
             mx = diff_vector.max()
             mn = diff_vector.min()
             df = mx - diff_vector.min()
             
             for k in range(num_places):
-                O_diff = ((diff_vector[k] - mn)/df) - algo_settings.epsilon
+                # Normalisation is changed to comply with using vectors of similarities (bigger = better);
+                # the original paper used vectors of differences (smaller = better)
+                O_diff = ((diff_vector[k] - mn)/df) - algo_settings.epsilon 
             
                 if O_diff < algo_settings.obs_th :
                     normalized_matricies[tech][query][k] = algo_settings.epsilon

@@ -19,7 +19,7 @@ matrices_path = '../research/projects/A-MuSIC/data/score_vectors/'
 techniques = ['NetVLAD', 'CoHOG', 'HOG', 'CALC']
 dataset = '17places_night'
 numTemplates = 2000
-margin=1
+margin=5
 diff_matrices = []
 
 # Load difference matrices
